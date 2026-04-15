@@ -1,17 +1,33 @@
-/**
- * @format
- */
+import {describe, expect, it} from '@jest/globals';
+import {
+  escapeHtml,
+  htmlToPlainText,
+  plainTextToHtml,
+  stripHtml,
+} from '../src/utils/helpers';
 
-import 'react-native';
-import React from 'react';
-import App from '../App';
+describe('helpers', () => {
+  it('strips rich-text markup for previews and sharing', () => {
+    expect(stripHtml('<p>Hello <strong>world</strong></p>')).toBe(
+      'Hello world',
+    );
+  });
 
-// Note: import explicitly to use the types shipped with jest.
-import {it} from '@jest/globals';
+  it('escapes plain titles before HTML export', () => {
+    expect(escapeHtml('Tom & "Jerry"')).toBe('Tom &amp; &quot;Jerry&quot;');
+  });
 
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+  it('turns rich text into readable plain text for the editor', () => {
+    expect(
+      htmlToPlainText(
+        '<p>Hello<br/>world</p><ul><li>First</li><li>Second</li></ul>',
+      ),
+    ).toBe('Hello\nworld\n\n- First\n- Second');
+  });
 
-it('renders correctly', () => {
-  renderer.create(<App />);
+  it('serializes plain text back into export-safe html', () => {
+    expect(plainTextToHtml('Line one\nLine two\n\nNext block')).toBe(
+      '<p>Line one<br/>Line two</p><p>Next block</p>',
+    );
+  });
 });

@@ -1,118 +1,140 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, Platform, StatusBar, StyleSheet, View} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import type {LinkingOptions} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {DatabaseProvider} from '@nozbe/watermelondb/react';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {database} from './src/database';
+import {migrateLegacyNotes} from './src/database/legacyImport';
+import {HomeScreen} from './src/screens/HomeScreen';
+import {EditorScreen} from './src/screens/EditorScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
+import {AppLockProvider} from './src/biometrics/AppLockContext';
+import {firebaseConfig} from './src/sync/firebaseConfig';
+import {initFirebase} from './src/sync/firebaseClient';
+import {enableSyncForUser} from './src/sync/syncEngine';
+import {ThemeProvider, useAppTheme} from './src/theme/ThemeContext';
+import type {AppColors} from './src/theme/colors';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+export type RootStack = {
+  Home: undefined;
+  Editor:
+    | {noteId?: string; defaultColor?: string; allowLockedAccess?: boolean}
+    | undefined;
+  Settings: undefined;
+  PrivacyPolicy: undefined;
+};
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const Stack = createNativeStackNavigator<RootStack>();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const linking: LinkingOptions<RootStack> = {
+  prefixes: ['goodnote://'],
+  config: {
+    screens: {
+      Home: 'home',
+      Editor: 'editor',
+    },
+  },
+};
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const AppShell = () => {
+  const {colors, navigationTheme, statusBarStyle} = useAppTheme();
+  const styles = createStyles(colors);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const bootstrapDatabase = async () => {
+      try {
+        await migrateLegacyNotes(database);
+        if (firebaseConfig) {
+          try {
+            initFirebase(firebaseConfig as any);
+            const anyCfg = firebaseConfig as any;
+            if (anyCfg.autoEnable && anyCfg.userId) {
+              await enableSyncForUser(database, anyCfg.userId);
+            }
+          } catch (e) {
+            console.warn('Failed to initialize Firebase sync', e);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to initialize WatermelonDB notes store.', error);
+      } finally {
+        if (isMounted) {
+          setIsReady(true);
+        }
+      }
+    };
+
+    bootstrapDatabase();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <DatabaseProvider database={database}>
+      {isReady ? (
+        <AppLockProvider>
+          <NavigationContainer theme={navigationTheme} linking={linking}>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+                animation: 'slide_from_bottom',
+                contentStyle: {backgroundColor: colors.bg},
+              }}>
+              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen
+                name="Editor"
+                component={EditorScreen}
+                initialParams={{}}
+              />
+              <Stack.Screen name="Settings" component={SettingsScreen} />
+              <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </AppLockProvider>
+      ) : (
+        <View style={styles.bootstrapScreen}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle={statusBarStyle}
+          />
+          <ActivityIndicator size="large" color={colors.accent} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      )}
+    </DatabaseProvider>
+  );
+};
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <GestureHandlerRootView style={rootStyles.gestureRoot}>
+        <AppShell />
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+const rootStyles = StyleSheet.create({
+  gestureRoot: {
+    flex: 1,
   },
 });
 
-export default App;
+const createStyles = (colors: AppColors) =>
+  StyleSheet.create({
+    bootstrapScreen: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.bg,
+    },
+  });

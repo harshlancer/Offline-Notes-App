@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">NotesApp</string>
+    <string name="app_name">goodnote</string>
+    <string name="notes_widget_name">goodnote Widget</string>
+    <string name="notes_widget_preview_title">GOODNOTE</string>
+    <string name="notes_widget_preview_label">RECENT THOUGHTS</string>
+    <string name="notes_widget_preview_note1_title">Project sprint plan</string>
+    <string name="notes_widget_preview_note1_preview">Refine tasks before Monday standup.</string>
+    <string name="notes_widget_preview_note2_title">Reading list</string>
+    <string name="notes_widget_preview_note2_preview">Capture the best ideas from today.</string>
 </resources>
