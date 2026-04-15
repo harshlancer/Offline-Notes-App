@@ -1,79 +1,96 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 📓 GoodNote
 
-# Getting Started
+[![React Native](https://img.shields.io/badge/React_Native-0.74.5-61DAFB?logo=react&logoColor=black)](https://reactnative.dev/)
+[![Platform](https://img.shields.io/badge/Platform-Android_|_iOS-brightgreen)](#)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+**GoodNote** is a premium, distraction-free note-taking application designed for focus and privacy. It features a unique **Bubble Canvas** interface that makes organizing thoughts feel natural and interactive, combined with robust security and export tools.
 
-## Step 1: Start the Metro Server
+---
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## ✨ Key Features
 
-To start Metro, run the following command from the _root_ of your React Native project:
+### 🫧 Bubble Canvas & Grid Layouts
+Switch between a traditional sorted grid or a dynamic, interactive bubble canvas where notes float freely. Avoid clutter with built-in collision detection and smooth animations.
 
-```bash
-# using npm
-npm start
+### 🔒 Biometric Privacy
+Keep your thoughts private. Lock specific notes or the entire app using **Biometric Authentication** (Fingerprint/FaceID) or a secure PIN.
 
-# OR using Yarn
-yarn start
-```
+### ✍️ Premium Rich Text Editor
+Experience a refined writing environment with:
+- Full text formatting (Bold, Italic, Lists)
+- Image inserts
+- Real-time auto-save
+- Clean, distraction-free interface
 
-## Step 2: Start your Application
+### 📄 PDF Export & Sharing
+Professional PDF generation for any note. Share your ideas as structured documents with a single tap.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+### 🎨 Design Systems
+Beautifully crafted UI with support for:
+- **Matte Minimal**: A clean, professional look and feel.
+- **Cyberpunk / Interactive**: For those who want a more dynamic experience.
+- **Dark & Light Modes**: Full system-aware theme support.
 
-### For Android
+### 📱 Android Home Screen Widget
+Quickly view and access your most important notes directly from your home screen with a sleek, interactive widget.
 
-```bash
-# using npm
-npm run android
+---
 
-# OR using Yarn
-yarn android
-```
+## 🛠️ Tech Stack
 
-### For iOS
+- **Core**: React Native (0.74.5)
+- **Database**: WatermelonDB (Offline-first, high performance)
+- **Navigation**: React Navigation
+- **Security**: React Native Biometrics & Keychain
+- **Styling**: Context-based dynamic theme engine
+- **Export**: React Native HTML to PDF
 
-```bash
-# using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
-```
+## 🚀 Getting Started
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Prerequisites
+- Node.js >= 18
+- Android Studio / Xcode
+- Yarn or NPM
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+### Installation
 
-## Step 3: Modifying your App
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/harshlancer/Offline-Notes-App.git
+   cd Offline-Notes-App
+   ```
 
-Now that you have successfully run the app, let's modify it.
+2. **Install dependencies**
+   ```bash
+   yarn install
+   # or
+   npm install
+   ```
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+3. **Run on Android**
+   ```bash
+   yarn android
+   ```
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+4. **Run on iOS**
+   ```bash
+   cd ios && pod install && cd ..
+   yarn ios
+   ```
 
-## Congratulations! :tada:
+---
 
-You've successfully run and modified your React Native App. :partying_face:
+## 🛡️ Privacy & Security
+GoodNote is **Offline-First**. Your notes are stored locally on your device using encrypted storage where necessary, ensuring that your data stays yours. Optional Firebase sync is available but disabled by default.
 
-### Now what?
+---
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-# Troubleshooting
+---
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Developed with ❤️ by [Harsh Lancer](https://github.com/harshlancer)
